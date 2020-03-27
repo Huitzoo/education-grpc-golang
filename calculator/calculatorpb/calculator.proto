@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package="calculatorpb";
+
+message Calculator{
+    int32 firt_number = 1;
+    int32 second_number = 2;
+}
+
+message CalculatorRequest{
+    Calculator calculate = 1;
+}
+
+message CalculatorResponse{
+    int32 result = 1;
+}
+
+message PrimeFactorDescomptition{
+    int32 number =1;
+}
+
+message PrimeFactorDescomptitionManyTimeRequest{
+    PrimeFactorDescomptition prime = 1;
+}
+
+message PrimeFactorDescomptitionManyTimeResponse{
+    int32 result = 1;
+}
+
+message LongCalculatorRequest{
+    int32 number = 1;
+}
+
+message LongCalculatorResponse{
+    double number = 1;
+}
+
+message MaximumEveryOneRequest{
+    Calculator calculate = 1;
+}
+
+message MaximumEveryOneResponse{
+    int32 result = 1;
+}
+
+message SquareRootsRequest{
+    int32 number = 1;
+}
+message SquareRootsResponse{
+    double result = 1;
+}
+
+service CalculatorService{
+    rpc Calculator(CalculatorRequest) returns (CalculatorResponse) {};
+    rpc PrimeNumberDecomposition(PrimeFactorDescomptitionManyTimeRequest) returns (stream PrimeFactorDescomptitionManyTimeResponse){};
+    rpc LongCalculator(stream LongCalculatorRequest) returns (LongCalculatorResponse){};
+    rpc MaximumEveryOne(stream MaximumEveryOneRequest) returns (stream MaximumEveryOneResponse){}; 
+    rpc SquareRoots(SquareRootsRequest) returns (SquareRootsResponse){};
+    
+}
+

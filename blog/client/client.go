@@ -24,12 +24,25 @@ func main() {
 	c := blogpb.NewBlogServiceClient(cc)
 
 	//doUnary(c)
-	doUnaryReadBlog(c)
-	//doServerStreaming(c)
-	//doClientStreming(c)
-	//doBiDirecciontal(c)
-	//doUnaryWithDeadline(c, 1)
-	//doUnaryWithDeadline(c, 5)
+	//doUnaryReadBlog(c)
+	doUnaryUpdateBlog(c)
+}
+
+func doUnaryUpdateBlog(c blogpb.BlogServiceClient) {
+	ctx := context.Background()
+	req := &blogpb.UpdateBlogRequest{
+		Blog: &blogpb.Blog{
+			AuthorID: "Huitzoo",
+		},
+		Iod: "5e7d8ea9f2d43d6b6b82cb79",
+	}
+
+	response, err := c.UpdateBlog(ctx, req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(response)
+
 }
 
 func doUnaryReadBlog(c blogpb.BlogServiceClient) {
@@ -50,9 +63,9 @@ func doUnary(c blogpb.BlogServiceClient) {
 	ctx := context.Background()
 	req := &blogpb.CreateBlogRequest{
 		Blog: &blogpb.Blog{
-			AuthorID: "1245",
-			Content:  "Hola, este es un contenido de este blog alv",
-			Title:    "Alv",
+			AuthorID: "oscar",
+			Content:  "Que no te consuma la calle, ni la plata",
+			Title:    "frases",
 		},
 	}
 
@@ -60,6 +73,6 @@ func doUnary(c blogpb.BlogServiceClient) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(response.Result)
+	fmt.Println(response)
 
 }

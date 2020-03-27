@@ -17,6 +17,7 @@ message CreateBlogRequest{
 }
 message CreateBlogResponse{
     string result = 1;
+    string iod = 2;
 }
 message ReadBlogRequest{
     string blogID = 1;
@@ -25,8 +26,26 @@ message ReadBlogResponse{
     Blog blog = 1;
 }
 
+message UpdateBlogRequest{
+    Blog blog = 1;
+    string iod = 2;
+}
+
+message UpdateBlogResponse{
+    string iod = 2;
+}
+
+message ListBlogsRequest{
+    int32 total = 1;
+}
+
+message ListBlogsResponse{
+    Blog blog = 1;
+}
+
 service BlogService{
     rpc CreateBlog(CreateBlogRequest) returns (CreateBlogResponse){};
     rpc ReadBlog(ReadBlogRequest) returns (ReadBlogResponse){};
-
+    rpc UpdateBlog(UpdateBlogRequest) returns (UpdateBlogResponse){};
+    rpc ListBlogs(ListBlogsRequest) returns  (stream ListBlogsResponse){};
 }

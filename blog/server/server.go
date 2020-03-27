@@ -30,12 +30,13 @@ func (*server) CreateBlog(ctx context.Context, request *blogpb.CreateBlogRequest
 		Title:    blog.GetTitle(),
 	}
 
-	_, err := mongodb.InsertOne(0, data)
+	iod, err := mongodb.InsertOne(0, data)
+
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal error:%v", err))
 	}
 
-	return &blogpb.CreateBlogResponse{Result: "ok"}, nil
+	return &blogpb.CreateBlogResponse{Result: "Created", Iod: iod}, nil
 }
 
 func (*server) ReadBlog(ctx context.Context, request *blogpb.ReadBlogRequest) (*blogpb.ReadBlogResponse, error) {
@@ -45,9 +46,12 @@ func (*server) ReadBlog(ctx context.Context, request *blogpb.ReadBlogRequest) (*
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal error:%v", err))
 	}
+
 	response := &models.ItemBlog{}
+
 	if err := data.Decode(response); err != nil {
-		log.Fatal(err)
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal error:%v", err))
+
 	}
 
 	return &blogpb.ReadBlogResponse{
@@ -60,6 +64,30 @@ func (*server) ReadBlog(ctx context.Context, request *blogpb.ReadBlogRequest) (*
 	}, nil
 }
 
+func (*server) UpdateBlog(ctx context.Context, request *blogpb.UpdateBlogRequest) (*blogpb.UpdateBlogResponse, error) {
+	blog := request.GetBlog()
+	fmt.Println(blog)
+	iod := request.GetIod()
+
+	data := models.ItemBlog{
+		AuthorID: blog.GetAuthorID(),
+		Content:  blog.GetContent(),
+		Title:    blog.GetTitle(),
+	}
+
+	_, err := mongodb.UpdateOne(0, iod, data)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal error:%v", err))
+	}
+
+	return &blogpb.UpdateBlogResponse{
+		Iod: "JJJJ",
+	}, nil
+}
+
+func (*server) ListBlogs(request *blogpb.ListBlogsRequest, stream blogpb.BlogService_ListBlogsServer) error {
+	return nil
+}
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	fmt.Println("Server is started")

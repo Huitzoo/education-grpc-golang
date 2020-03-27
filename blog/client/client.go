@@ -4,6 +4,7 @@ import (
 	"blog/blogpb"
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"google.golang.org/grpc"
@@ -25,7 +26,26 @@ func main() {
 
 	//doUnary(c)
 	//doUnaryReadBlog(c)
-	doUnaryUpdateBlog(c)
+	//doUnaryUpdateBlog(c)
+	doUnaryGetList(c)
+}
+func doUnaryGetList(c blogpb.BlogServiceClient) {
+	req := &blogpb.ListBlogsRequest{}
+
+	stream, err := c.ListBlogs(context.Background(), req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for {
+		result, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(result.GetBlog())
+	}
 }
 
 func doUnaryUpdateBlog(c blogpb.BlogServiceClient) {

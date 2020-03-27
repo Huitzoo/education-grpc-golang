@@ -86,8 +86,34 @@ func (*server) UpdateBlog(ctx context.Context, request *blogpb.UpdateBlogRequest
 }
 
 func (*server) ListBlogs(request *blogpb.ListBlogsRequest, stream blogpb.BlogService_ListBlogsServer) error {
+	cur, err := mongodb.GetListBlogs(0)
+	if err != nil {
+		return status.Errorf(codes.Internal, fmt.Sprintf("Internal error:%v", err))
+	}
+
+	defer cur.Close(context.Background())
+	fmt.Println(cur)
+	for {
+		if cur.Next(context.Background()) {
+			blog := &models.ItemBlog{}
+			errDecode := cur.Decode(blog)
+			if errDecode != nil {
+				return status.Errorf(codes.Internal, fmt.Sprintf("Internal error:%v", errDecode))
+			}
+			stream.Send(&blogpb.ListBlogsResponse{
+				Blog: &blogpb.Blog{
+					AuthorID: blog.AuthorID,
+					Content:  blog.Content,
+					Title:    blog.Title,
+				},
+			})
+		} else {
+			break
+		}
+	}
 	return nil
 }
+
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	fmt.Println("Server is started")

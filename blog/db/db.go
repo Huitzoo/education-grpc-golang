@@ -86,6 +86,13 @@ func (db *DB) UpdateOne(collection int, iod string, data interface{}) (*mongo.Up
 	return result, nil
 }
 
+//GetListBlogs is
+func (db *DB) GetListBlogs(collection int) (*mongo.Cursor, error) {
+	filter := bson.M{}
+	return db.collections[collection].Find(context.Background(), filter)
+
+}
+
 //FindByID is
 func (db *DB) FindByID(collection int, id string) (*mongo.SingleResult, error) {
 	iod, err := primitive.ObjectIDFromHex(id)
